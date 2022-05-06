@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "module": "commonjs",
+    "outDir": "dist",
+    "rootDir": "src/electron",
+    "strict": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "lib": [
+      "es2020",
+      "dom"
+    ],
+    "types": [
+      "svelte"
+    ]
+  },
+  "exclude": [
+    "node_modules",
+    "dist/www",
+    "out/**",
+    "src/frontend/**",
+    "src/resources/**",
+  ],
+  "include": [
+    "src/electron/**/*",
+    "src/frontend/global.d.ts"
+, "src/frontend/tsconfig.json"  ],
+}
