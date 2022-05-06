@@ -1,10 +1,17 @@
-# Problems with TypeScript
+# Problems with TypeScript #
 
 My modified template for Electron/Svelte/Typescript base on *Samuele de Tomasi's* work. 
 
-Currently I'm wondering if there is a way to compile the `TS` files to `esnext` in order to avoid the overhead that is created. For example, the file `Foo.ts`
+Currently I am facing two problems that are a result of switching to typescript:
+1.  Using `Types` from other classes requires me to import these in order to use them (see `src/electron/libs/Bar.ts`, where an import of `Foo` is required: `import { Foo } from "./Foo"`). This creates quite a bit of overhead. A possible solutions, i.e. using `global.d.ts` seems to be strongly discouraged. 
+
+**-> So is there a way to avoid importing `Types` (`classes`, `interfaces`, etc.) each time?**
+
+2. The compiled files have some overhead and are not *"clean"* (e.g. `src/electron/libs/Foo.ts` compiles to `dist/libs/Foo.js` which has additional lines regarding the export:
 
 ```
+// Foo.ts (input)
+
 export class Foo {
     bar: number;
     constructor() { this.bar = 42; }
@@ -14,6 +21,8 @@ export class Foo {
 is compiled to
 
 ```
+// Foo.js (output)
+
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Foo = void 0;
@@ -23,119 +32,11 @@ class Foo {
 exports.Foo = Foo;
 ```
 
-Modifiying the compiler options in `tsconfig.json` from `"module": "commonjs"` to `"module": "esnext"` produces a clean `Foo.js`, but then the app does not run anymore. 
+Modifiying the compiler options in `tsconfig.json` from `"module": "commonjs"` to `"module": "esnext"` produces clean `*.js` files.
 
-I wonder if there is a way to get this to work or is this (still) a limitation of using Node/Electron?
+So I'm wondering if there is a way to compile the `TS` files to `esnext` or is this (still) a limitation of using Node/Electron?
 
+...
 
-# Source:** https://blog.stranianelli.com/svelte-et-electron-et-typescript-english/
+### Template Source: https://blog.stranianelli.com/svelte-et-electron-et-typescript-english/ 
 
-*Psst — looking for a more complete solution? Check out [SvelteKit](https://kit.svelte.dev), the official framework for building web applications of all sizes, with a beautiful development experience and flexible filesystem-based routing.*
-
-*Looking for a shareable component template instead? You can [use SvelteKit for that as well](https://kit.svelte.dev/docs#packaging) or the older [sveltejs/component-template](https://github.com/sveltejs/component-template)*
-
----
-
-# svelte app
-
-This is a project template for [Svelte](https://svelte.dev) apps. It lives at https://github.com/sveltejs/template.
-
-To create a new project based on this template using [degit](https://github.com/Rich-Harris/degit):
-
-```bash
-npx degit sveltejs/template svelte-app
-cd svelte-app
-```
-
-*Note that you will need to have [Node.js](https://nodejs.org) installed.*
-
-
-## Get started
-
-Install the dependencies...
-
-```bash
-cd svelte-app
-npm install
-```
-
-...then start [Rollup](https://rollupjs.org):
-
-```bash
-npm run dev
-```
-
-Navigate to [localhost:8080](http://localhost:8080). You should see your app running. Edit a component file in `src`, save it, and reload the page to see your changes.
-
-By default, the server will only respond to requests from localhost. To allow connections from other computers, edit the `sirv` commands in package.json to include the option `--host 0.0.0.0`.
-
-If you're using [Visual Studio Code](https://code.visualstudio.com/) we recommend installing the official extension [Svelte for VS Code](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode). If you are using other editors you may need to install a plugin in order to get syntax highlighting and intellisense.
-
-## Building and running in production mode
-
-To create an optimised version of the app:
-
-```bash
-npm run build
-```
-
-You can run the newly built app with `npm run start`. This uses [sirv](https://github.com/lukeed/sirv), which is included in your package.json's `dependencies` so that the app will work when you deploy to platforms like [Heroku](https://heroku.com).
-
-
-## Single-page app mode
-
-By default, sirv will only respond to requests that match files in `public`. This is to maximise compatibility with static fileservers, allowing you to deploy your app anywhere.
-
-If you're building a single-page app (SPA) with multiple routes, sirv needs to be able to respond to requests for *any* path. You can make it so by editing the `"start"` command in package.json:
-
-```js
-"start": "sirv public --single"
-```
-
-## Using TypeScript
-
-This template comes with a script to set up a TypeScript development environment, you can run it immediately after cloning the template with:
-
-```bash
-node scripts/setupTypeScript.js
-```
-
-Or remove the script via:
-
-```bash
-rm scripts/setupTypeScript.js
-```
-
-If you want to use `baseUrl` or `path` aliases within your `tsconfig`, you need to set up `@rollup/plugin-alias` to tell Rollup to resolve the aliases. For more info, see [this StackOverflow question](https://stackoverflow.com/questions/63427935/setup-tsconfig-path-in-svelte).
-
-## Deploying to the web
-
-### With [Vercel](https://vercel.com)
-
-Install `vercel` if you haven't already:
-
-```bash
-npm install -g vercel
-```
-
-Then, from within your project folder:
-
-```bash
-cd public
-vercel deploy --name my-project
-```
-
-### With [surge](https://surge.sh/)
-
-Install `surge` if you haven't already:
-
-```bash
-npm install -g surge
-```
-
-Then, from within your project folder:
-
-```bash
-npm run build
-surge public my-project.surge.sh
-```
